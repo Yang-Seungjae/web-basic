@@ -1,0 +1,48 @@
+<!-- form  -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입</title>
+  </head>
+  <body>
+    VAVER <br /><br />
+
+    <form action="day01.html">
+      아이디:<br />
+      <input type="text" />
+      <br />
+      비밀번호:<br />
+      <input type="text" /> <br />
+      비밀번호 재확인:<br />
+      <input type="text" /> <br />
+      <br />
+      이름:<br />
+      <input type="text" /> <br />
+      <br />
+      생년월일 <br />
+      <input type="date" /> <br /><br />
+
+      <!-- name으로 그룹 -->
+      <input type="radio" name="sex" /> 남자<br />
+      <input type="radio" name="sex" /> 여자<br /><br />
+
+      본인 확인 이메일 <br />
+      <input type="email" /> <br />
+      <br />
+      휴대전화<br />
+      <input
+        type="tel"
+        id="phone"
+        name="phone"
+        pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
+      />
+
+      <br /><br />
+
+      <input type="submit" value="가입" />
+    </form>
+  </body>
+</html>
