@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      /* #이붙으면 ID를 의미 */
+      #div_id {
+        color: blue;
+      }
+      /* . 찍으면 클래스를 의미 */
+      .div_class {
+        background-color: red;
+      }
+      /* 두번 색을 적용하였으면 마지막꺼가 적용 */
+      .div_class2 {
+        width: 100px;
+        background-color: aqua;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="div_class">div1</div>
+    <div id="div_id" class="div_class div_class2">div2</div>
+    <!-- 잘안씀 -->
+    <div name="div_name">div3</div>
+  </body>
+</html>

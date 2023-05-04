@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+   
+    <style>
+        /* 전체 스케일업 (크기 조절) 위치조절  */
+       #div1{
+        transform:scale(3) translate(100px, 100px);
+        
+        
+       }
+      #span12 {
+        display: block;
+        color: aqua;
+      }
+      .div_class {
+        width: 100px;
+        background-color: plum;
+      }
+      #span13 {
+        background-color: tomato;
+      }
+      .div_class {
+        border: 3px solid green;
+      }
+      * {
+        text-decoration: overline underline line-through ;
+        color: blue;
+      /*   text-decoration: line-through slateblue; */
+      }
+      #span13 {
+        text-transform: uppercase;
+      }
+      #span11 {
+        text-indent: 10%;
+      }
+      * {
+        text-align: center;
+      }
+      #span12 {
+        font-family: "Courier New", Courier, monospace;
+        font-size: large;
+        font-style: oblique;
+        font-weight: bolder;
+        text-shadow: 2px 5px 1px #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="div_class" id="div1">
+      <span class="span_class" name="span_name1" id="span12">text2</span><br />
+      <span class="span_class" name="span_name1" id="span11">text1</span>
+      <span class="span_class" name="span_name1" id="span13">text3</span>
+    </div>
+    <!-- .div_class*3>span.span_class*3 -->
+  </body>
+</html>
