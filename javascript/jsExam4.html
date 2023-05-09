@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #one {
+        background-color: black;
+        color: white;
+      }
+      #two {
+        background-color: black;
+        color: white;
+      }
+      #three {
+        background-color: black;
+        color: white;
+      }
+    </style>
+    <script>
+      let prebutton = null;
+      function invertColor(color) {
+        let div = document.getElementById(color);
+
+        if (prebutton === div) {
+          return;
+        }
+        if (prebutton !== null) {
+          prebutton.style.backgroundColor = "black";
+          prebutton.style.color = "white";
+        }
+        div.style.backgroundColor = "white";
+        div.style.color = "black";
+        prebutton = div;
+        //반전으로는 못하는건가
+        // if (div.style.filter == "invert(100%)") {
+        //   div.style.filter = "none";
+        //   prebutton = null;
+        // } else {
+        //   div.style.filter = "invert(100%)";
+        // }
+
+        // prebutton = div
+      }
+    </script>
+  </head>
+  <body>
+    <button id="one" onclick="invertColor('one')">html</button>
+    <button id="two" onclick="invertColor('two')">css</button>
+    <button id="three" onclick="invertColor('three')">javascript</button> <br />
+  </body>
+</html>
