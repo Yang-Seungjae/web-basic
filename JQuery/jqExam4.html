@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $('input[type="radio"]').click(function () {
+        let isChecked = $(this).prop("checked");
+        if (isChecked) {
+          $(this).prop("checked", false);
+        } else {
+          $(this).prop("checked", true);
+        }
+      });
+      $(document).ready(function () {
+        $("form").submit(function (event) {
+          // 이메일 형식 검사를 위한 정규표현식
+          let userId = $("#userId").val();
+          // 입력된 값이 이메일 형식인지 검사합니다.
+          let emailRegExp = /\S+@\S+\.\S+/;
+          let password = $("#password").val();
+          // 선택된 취미 수를 계산합니다.
+          let selectedHobbies = $('input[name="hobby"]:checked').length;
+          let isChecked = $('input[name="options"]:checked').val();
+
+          if (!emailRegExp.test(userId)) {
+            alert("이메일 형식으로 입력해주세요.");
+            event.preventDefault();
+          } else if (password.length < 5) {
+            alert("비밀번호는 최소 5글자 이상이어야 합니다");
+            event.preventDefault();
+          } else if (isChecked == null || isChecked == false) {
+            alert("성별을 선택해주세요");
+            event.preventDefault();
+          }
+          // 선택된 취미가 3개 미만인 경우 폼 제출을 취소합니다.
+          else if (selectedHobbies < 3) {
+            alert("최소 3개 이상의 취미를 선택해야 합니다.");
+            event.preventDefault();
+          } else {
+            alert("회원가입이 완료되었습니다");
+          }
+        });
+      });
+    </script>
+
+    <style></style>
+  </head>
+  <body>
+    <form action="">
+      아이디&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="text" id="userId" /><br />
+      <!-- text자리에 email로 바꾸면 입력할때 바로 경고가 발생 -->
+      비밀번호&nbsp;
+      <input type="password" id="password" /><br />
+      <!-- id 뒤에 required minlegth="" 적으면 이거보다 적을경우 바로 경고 발생 -->
+      성별&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <label for="radio1">남자</label>
+      <input type="radio" id="radio1" name="options" value="1" />
+      <label for="radio2">여자</label>
+      <input type="radio" id="radio2" name="options" value="2" /> <br />
+      직업&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <select name="job" required>
+        <option value="" class="option"></option>
+        <option value="" class="option">데이터분석가</option>
+        <option value="" class="option">프론트엔드개발자</option>
+        <option value="" class="option">백엔드개발자</option>
+      </select>
+      <br />
+      취미&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="checkbox" name="hobby" id="" /> 개발
+      <input type="checkbox" name="hobby" id="" /> 게임
+      <input type="checkbox" name="hobby" id="" /> 낚시
+      <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <!-- 이부분을 이렇게 밖에 못해? -->
+      <input type="checkbox" name="hobby" id="" /> 운동
+      <input type="checkbox" name="hobby" id="" /> 독서
+      <input type="checkbox" name="hobby" id="" /> 음악감상
+
+      <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="reset" value="취소" name="" id="" />
+      <input type="submit" value="회원가입" name="" id="" />
+    </form>
+  </body>
+</html>

@@ -44,11 +44,18 @@
     <script>
       $(document).ready(function () {
         $("#button").click(function () {
-          var article = prompt("추가할 기사 내용을 입력하세요.");
+          let name = prompt("기자 이름을 입력하세요.");
+          let article = prompt("추가할 기사 내용을 입력하세요.");
           if (article !== null && article !== "") {
-            var newArticle =
-              '<div class="article"><b>NEW</b> ' + article + "</div>";
-            var $newArticle = $(newArticle);
+            let newArticle =
+              '<div class="article">' +
+              "<b>" +
+              name +
+              "</b>" +
+              "&nbsp" +
+              article +
+              "</div>";
+            let $newArticle = $(newArticle);
             $("#div2").append($newArticle);
           }
         });
