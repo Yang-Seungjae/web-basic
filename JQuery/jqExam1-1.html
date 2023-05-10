@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    #message {
+      font-size: xx-large;
+      display: flex;
+      align-items: center;
+      height: 1000px;
+      justify-content: center;
+    }
+    button {
+      position: absolute;
+      top: 600px;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    $(document).ready(function() {
+      let message = prompt("텍스트를 입력하세요");
+      if (message === null || message === '') {
+        alert("텍스트값을 입력해 주세요");
+        return;
+      }
+
+      let textDiv = $('<div>').attr('id', 'message').text(message).appendTo($('body'));
+
+      let colors = {
+        '빨강': '#ff0000',
+        '파랑': '#0000ff',
+        '초록': '#00ff00'
+      };
+
+      $.each(colors, function(colorName, colorValue) {
+        let button = $('<button>').text(colorName).appendTo($('body'));
+        button.css('left', (870 + 60 * Object.keys(colors).indexOf(colorName)) + 'px');
+        button.click(function() {
+          textDiv.css('color', colorValue);
+          alert(colorName + '색으로 변경합니다');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

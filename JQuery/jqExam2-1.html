@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #div1 {
+        background-color: rgb(38, 77, 194);
+        width: 300px;
+        padding: 20px;
+      }
+      #div2 {
+        background-color: rgba(128, 128, 128, 0.438);
+        width: 300px;
+        min-height: 200px;
+        padding: 20px;
+        z-index: -1;
+      }
+      .article {
+        background-color: white;
+        line-height: 1;
+        border: 1px solid gray;
+        margin-bottom: 10px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="div1"><b>월간 뉴스</b></div>
+    <div id="div2">
+      <b
+        >오늘의 뉴스
+        <div class="article"><b>박지성</b> SBS에서 월드컵보세요!</div>
+        <div class="article"><b>안정환</b> MBC죠...</div>
+        <div class="article"><b>이영표</b> KBS는 수신료의 가치를..</div>
+      </b>
+    </div>
+
+    <button id="button">등록하기</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#button").click(function () {
+          var article = prompt("추가할 기사 내용을 입력하세요.");
+          if (article !== null && article !== "") {
+            var newArticle =
+              '<div class="article"><b>NEW</b> ' + article + "</div>";
+            var $newArticle = $(newArticle);
+            $("#div2").append($newArticle);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

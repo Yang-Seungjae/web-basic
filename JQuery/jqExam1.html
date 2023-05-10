@@ -1,0 +1,87 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+
+        <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    
+        <style>
+            #message {
+                font-size: xx-large;
+                display: flex;
+                align-items: center;
+                height: 1000px;
+                justify-content: center;
+            }
+            #red1 {
+                position: absolute;
+                top: 600px;
+                left: 870px;
+            }
+            #blue1 {
+                position: absolute;
+                top: 600px;
+                left: 930px;
+            }
+            #green1 {
+                position: absolute;
+                top: 600px;
+                left: 990px;
+            }
+        </style>
+    </head>
+    <body>
+    
+    <script>
+        $(document).ready(function () {
+    
+            function getText() {
+                let message = prompt("텍스트를 입력하세요");
+                if (message === null) {
+                    alert("텍스트값을 입력해 주세요");
+                    message = prompt("텍스트를 입력하세요");
+                } else {
+                    let textDiv = $("<div>").text(message).attr("id", "message");
+                    $("body").append(textDiv);
+    
+                    let button1 = $("<button>").text("빨강").attr("id", "red1");
+                    $("body").append(button1);
+                    button1.on("click", changeColorRed);
+    
+                    let button2 = $("<button>").text("파랑").attr("id", "blue1");
+                    $("body").append(button2);
+                    button2.on("click", changeColorBlue);
+    
+                    let button3 = $("<button>").text("초록").attr("id", "green1");
+                    $("body").append(button3);
+                    button3.on("click", changeColorGreen);
+                }
+            }
+    
+            function changeColorRed() {
+                let red = $("#message");
+                red.css("color", "#ff0000");
+                alert("빨강색으로 변경합니다");
+            }
+    
+            function changeColorBlue() {
+                let blue = $("#message");
+                blue.css("color", "#0000ff");
+                alert("파랑색으로 변경합니다");
+            }
+    
+            function changeColorGreen() {
+                let green = $("#message");
+                green.css("color", "#00ff00");
+                alert("초록색으로 변경합니다");
+            }
+    
+            getText();
+    
+        });
+    </script>
+    </body>
+    </html>
+    
