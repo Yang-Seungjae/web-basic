@@ -1,12 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Table Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // 전체 선택 체크박스 이벤트 리스너
+        $("#check-all").change(function () {
+          $(".check-item").prop("checked", $(this).prop("checked"));
+        });
+
+        // 로그 버튼 클릭 이벤트 리스너
+        $("#log-btn").click(function () {
+          let checkedItems = $(".check-item:checked");
+          if (checkedItems.length === 0) {
+            alert("선택된 항목이 없습니다.");
+            return;
+          }
+          checkedItems.each(function () {
+            console.log($(this).closest("tr").find("td:eq(1)").text());
+          });
+        });
+      });
+    </script>
+    <style>
+      table,
+      td,
+      tr,
+      th {
+        border: 1px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="check-all" /> 확인</th>
+          <th>제목</th>
+          <th>글쓴시간</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox" class="check-item" /></td>
+          <td>자바</td>
+          <td>2023-05-10 10:00:00</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="check-item" /></td>
+          <td>파이썬</td>
+          <td>2023-05-10 11:00:00</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="check-item" /></td>
+          <td>HTML</td>
+          <td>2023-05-10 12:00:00</td>
+        </tr>
+      </tbody>
+    </table>
+    <button id="log-btn">로그</button>
+  </body>
 </html>
