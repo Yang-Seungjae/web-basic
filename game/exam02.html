@@ -6,44 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <style>
       #container {
         position: absolute;
-        width: 300px;
-        height: 150px;
+        width: 900px;
+        height: 450px;
         border: 1px solid black;
       }
       #starkurvi {
         position: absolute;
-        left: 80px;
-        top: 120px;
+        left: 240px;
+        top: 360px;
         bottom: auto;
         right: auto;
-        width: 30px;
-        height: 30px;
+        width: 90px;
+        height: 90px;
         border: 1px solid;
       }
       #enemy {
-        width: 20px;
-        height: 10px;
+        width: 60px;
+        height: 30px;
         position: absolute;
         left: auto;
         top: auto;
         right: 0px;
-        bottom: 2px;
+        bottom: 6px;
         border: 1px solid;
       }
       #gameover {
         border: 1px solid;
-        font-size: 1px;
-        width: 90px;
+        font-size: 3px;
+        width: 270px;
         position: absolute;
-        left: 100px;
-        top: 50px;
+        left: 300px;
+        top: 150px;
         display: none;
       }
       #button {
-        transform: translate(20px);
+        transform: translate(60px);
+      }
+      #score {
+        font-size: 50px;
       }
     </style>
     <script>
@@ -54,7 +58,8 @@
       $(function () {
         const starkurvi = $("#starkurvi");
         const enemy = $("#enemy");
-        isjumping = null;
+        isjumping = false;
+        let score = 0;
 
         gameStart();
 
@@ -95,8 +100,8 @@
 
         function jump() {
           isjumping = true;
-          starkurvi.animate({ top: "-=100px" }, "fast");
-          starkurvi.animate({ top: "+=100px" }, "fast", function () {
+          starkurvi.animate({ top: "-=200px" }, "fast");
+          starkurvi.animate({ top: "+=200px" }, "fast", function () {
             isjumping = false;
           });
         }
@@ -106,13 +111,18 @@
 
           checkGameOver();
         }
+        function updateScore(score) {
+          $("#score").text(score);
+        }
 
         function enemyStart() {
           //속도조절
-          const speed = getRandomNumber(1000, 3000);
+          const speed = getRandomNumber(1000, 2000);
 
-          enemy.animate({ right: "300px" }, speed, function () {
+          enemy.animate({ right: "900px" }, speed, function () {
             enemy.css("right", "-50px");
+            score += 100;
+            updateScore(score);
           });
           setInterval(enemyStart, 3000);
         }
@@ -132,5 +142,6 @@
       커비가 죽었습니다
       <button id="button" onclick="location.reload()">확인</button>
     </div>
+    <div id="score">0</div>
   </body>
 </html>
