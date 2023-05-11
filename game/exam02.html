@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      #container {
+        position: absolute;
+        width: 300px;
+        height: 150px;
+        border: 1px solid black;
+      }
+      #starkurvi {
+        position: absolute;
+        left: 20px;
+        top: 100px;
+        width: 50px;
+        height: 50px;
+        border: 1px solid;
+      }
+    </style>
+    <script>
+      $(function () {
+        const starkurvi = $("#starkurvi");
+
+        gameStart();
+
+        function setKeyboardEvent() {
+          //키보드 이벤트 정의
+          $("html").keydown(function (e) {
+            switch (e.key) {
+              case " ":
+                jump();
+                break;
+            }
+            console.log(e.key);
+            console.log($("#starkurvi").css("top"));
+          });
+        }
+
+        function jump() {
+          starkurvi.animate({ top: "-=100px" }, "fast");
+          starkurvi.animate({ top: "+=100px" }, "fast");
+        }
+        function gameStart() {
+          setKeyboardEvent();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <img id="starkurvi" src="starkurvi.png" alt="" />
+    </div>
+  </body>
+</html>
