@@ -25,6 +25,7 @@
     <script>
       $(function () {
         const starkurvi = $("#starkurvi");
+        isjumping = null;
 
         gameStart();
 
@@ -33,7 +34,10 @@
           $("html").keydown(function (e) {
             switch (e.key) {
               case " ":
-                jump();
+                if (!isjumping) {
+                  //점프 연타 방지
+                  jump();
+                }
                 break;
             }
             console.log(e.key);
@@ -42,8 +46,11 @@
         }
 
         function jump() {
+          isjumping = true;
           starkurvi.animate({ top: "-=100px" }, "fast");
-          starkurvi.animate({ top: "+=100px" }, "fast");
+          starkurvi.animate({ top: "+=100px" }, "fast", function () {
+            isjumping = false;
+          });
         }
         function gameStart() {
           setKeyboardEvent();
