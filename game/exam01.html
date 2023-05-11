@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(function () {
+        //키보드 이벤트 정의
+        $("html").keydown(function () {
+          console.log("이동!!!");
+        });
+      });
+    </script>
+    <style>
+      #container {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border: 1px solid black;
+      }
+      #starkurvi {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 80px;
+        border: 1px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <img id="starkurvi" src="starkurvi.png" alt="" />
+    </div>
+  </body>
+</html>

@@ -18,7 +18,7 @@
             alert("선택된 항목이 없습니다.");
             return;
           }
-          checkedItems.each(function () {
+          checkedItems.each(function () { // 체크된 항목을 순회하면서 가장 가까운 tr에 td eq1 에 있는 텍스트를 콘솔에 찍어라
             console.log($(this).closest("tr").find("td:eq(1)").text());
           });
         });
