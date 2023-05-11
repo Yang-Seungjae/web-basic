@@ -15,16 +15,45 @@
       }
       #starkurvi {
         position: absolute;
-        left: 20px;
-        top: 100px;
-        width: 50px;
-        height: 50px;
+        left: 80px;
+        top: 120px;
+        bottom: auto;
+        right: auto;
+        width: 30px;
+        height: 30px;
         border: 1px solid;
+      }
+      #enemy {
+        width: 20px;
+        height: 10px;
+        position: absolute;
+        left: auto;
+        top: auto;
+        right: 0px;
+        bottom: 2px;
+        border: 1px solid;
+      }
+      #gameover {
+        border: 1px solid;
+        font-size: 1px;
+        width: 90px;
+        position: absolute;
+        left: 100px;
+        top: 50px;
+        display: none;
+      }
+      #button {
+        transform: translate(20px);
       }
     </style>
     <script>
+      //이런식으로 전역변수로 만들어서 난이도 조절에 사용할수있다.
+      const ENEMY_SPEED_MIN_EASY = 5000;
+      const ENEMY_SPEED_MAX_HARD = 1000;
+
       $(function () {
         const starkurvi = $("#starkurvi");
+        const enemy = $("#enemy");
         isjumping = null;
 
         gameStart();
@@ -45,6 +74,25 @@
           });
         }
 
+        function checkGameOver() {
+          setInterval(function () {
+            const starkurviPos = starkurvi.offset();
+            const enemyPos = enemy.offset();
+
+            const isGameOver =
+              starkurviPos.left + starkurvi.width() > enemyPos.left &&
+              starkurviPos.top + starkurvi.height() > enemyPos.top &&
+              starkurviPos.left < enemyPos.left + enemy.width() &&
+              starkurviPos.top < enemyPos.top + enemy.height();
+
+            if (isGameOver) {
+              starkurvi.stop();
+              enemy.stop();
+              $("#gameover").css("display", "block");
+            }
+          }, 1000 / 60);
+        }
+
         function jump() {
           isjumping = true;
           starkurvi.animate({ top: "-=100px" }, "fast");
@@ -54,6 +102,23 @@
         }
         function gameStart() {
           setKeyboardEvent();
+          enemyStart();
+
+          checkGameOver();
+        }
+
+        function enemyStart() {
+          //속도조절
+          const speed = getRandomNumber(1000, 3000);
+
+          enemy.animate({ right: "300px" }, speed, function () {
+            enemy.css("right", "-50px");
+          });
+          setInterval(enemyStart, 3000);
+        }
+        //난이도 조절을 위해 랜덤한 숫자 생성
+        function getRandomNumber(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min;
         }
       });
     </script>
@@ -61,6 +126,11 @@
   <body>
     <div id="container">
       <img id="starkurvi" src="starkurvi.png" alt="" />
+      <img id="enemy" src="enemy.png" alt="" />
+    </div>
+    <div id="gameover">
+      커비가 죽었습니다
+      <button id="button" onclick="location.reload()">확인</button>
     </div>
   </body>
 </html>
