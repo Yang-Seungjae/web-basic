@@ -13,23 +13,28 @@
         width: 1000px;
         height: 600px;
         border: 1px solid black;
+        overflow: hidden; /* 이미지가 바깥으로 나가지 않도록 */
       }
 
       #player {
         position: absolute;
         left: 70px;
-        top: 415px;
+        top: 536px;
       }
 
       #enemy {
         width: 60px;
         height: 30px;
         position: absolute;
-        left: auto;
-        top: auto;
-        right: 0px;
-        bottom: 6px;
-        border: 1px solid;
+        top: 198px;
+        left: 50%;
+      }
+      .enemy {
+        width: 60px;
+        height: 30px;
+        position: absolute;
+        top: 198px;
+        left: 50%;
       }
       #gameover {
         border: 1px solid;
@@ -69,6 +74,7 @@
               case " ":
                 if (!isjumping) {
                   // 점프 연타 방지
+                  $("#player").stop();
                   jump();
                 }
                 break;
@@ -77,6 +83,9 @@
                 break;
               case "ArrowRight":
                 moveRight();
+                break;
+              case "a":
+                shoot();
                 break;
             }
             console.log(e.key);
@@ -89,7 +98,7 @@
           var player = $("#player");
           var x = parseInt(player.css("left"));
           var y = parseInt(player.css("top"));
-          var currentFloor = 0; // 현재 층수 변수 추가
+          var currentFloor = 1; // 현재 층수 변수 추가
           if ((x >= 130 && x <= 170) || (x >= 790 && x <= 830)) {
             y = 536;
             currentFloor = 1;
@@ -99,14 +108,23 @@
           } else if (y >= 200 && y <= 300) {
             y = 299;
             currentFloor = 3;
-          } else if (y < 185) {
+          } else if (y < 198 && 165 < y) {
             y = 178;
             currentFloor = 4;
           }
           player.css("top", y + "px");
+
+          // y값이 536일 때만 animate() 메서드를 사용하여 애니메이션 효과 적용
+          /*  if (y === 536) {
+                  player.animate({ top: y + "px" }, "medium");
+                } else {
+                  player.css("top", y + "px");
+                }
+
+       */
           return currentFloor; // 현재 층수 반환
         }
-      
+
         var isJumping = false;
 
         function jump() {
@@ -117,9 +135,13 @@
           var player = $("#player");
           var currentFloor = adjustPlayerPosition();
           var startY = parseInt(player.css("top"));
-          player.animate({ top: "-=160px" }, 300, "swing", function () {
+          player.animate({ top: "-=130px" }, "fast", function () {
             var newFloor = adjustPlayerPosition();
-            if (newFloor !== currentFloor) {
+            if (currentFloor === 4) {
+              player.animate({ top: "+=130px" }, "fast");
+              isJumping = false;
+              return;
+            } else if (newFloor !== currentFloor) {
               isJumping = false;
               return;
             }
@@ -142,12 +164,49 @@
               ")"
           );
         }
-     
+
+        function enemyJump() {
+          if (isJumping) {
+            return;
+          }
+          isJumping = true;
+          var enemy = $("#enemy");
+          var currentFloor = adjustEnemyPosition();
+          var startY = parseInt(enemy.css("top"));
+          enemy.animate({ top: "-=130px" }, "fast", function () {
+            var newFloor = adjustEnemyPosition();
+            if (currentFloor === 4) {
+              enemy.animate({ top: "+=130px" }, "fast");
+              isJumping = false;
+              return;
+            } else if (newFloor !== currentFloor) {
+              isJumping = false;
+              return;
+            }
+            var endY = parseInt(enemy.css("top"));
+            enemy.animate(
+              { top: startY - endY + "px" },
+              300,
+              "swing",
+              function () {
+                isJumping = false;
+                adjustEnemyPosition();
+              }
+            );
+          });
+          console.log(
+            "적의 위치: (" + enemy.css("left") + ": " + enemy.css("top") + ")"
+          );
+        }
+
         function moveLeft() {
           var player = $("#player");
           var leftPos = parseInt(player.css("left"));
           if (leftPos > 70) {
             player.css("left", leftPos - 20);
+            player.attr("src", "playerL.png");
+            player.addClass("left");
+            player.removeClass("right");
             console.log(
               "캐릭터의 위치: (" +
                 player.css("left") +
@@ -156,6 +215,7 @@
                 ")"
             );
           }
+          enemy;
           adjustPlayerPosition();
         }
 
@@ -164,6 +224,9 @@
           var leftPos = parseInt(player.css("left"));
           if (leftPos < 885) {
             player.css("left", leftPos + 20);
+            player.attr("src", "playerR.png");
+            player.addClass("right");
+            player.removeClass("left");
             console.log(
               "캐릭터의 위치: (" +
                 player.css("left") +
@@ -174,15 +237,100 @@
           }
           adjustPlayerPosition();
         }
+
+        // 적 위치 이동
+        function moveEnemy() {
+          var enemy = $("#enemy");
+          var left = parseInt(enemy.css("left"));
+          var direction = enemy.data("direction"); // 현재 이동 방향
+          var width = $("#container").width();
+
+          if (direction === "right") {
+            // 오른쪽으로 이동 중일 때
+            left += 5;
+            if (left > width - 80) {
+              // 오른쪽 끝에 도달한 경우
+              left = width - 80;
+              enemy.data("direction", "left"); // 이동 방향 변경
+            } else if (left >= 890) {
+              // x좌표가 890일 때
+              enemy.data("direction", "left"); // 이동 방향 변경
+            }
+          } else {
+            // 왼쪽으로 이동 중일 때
+            left -= 5;
+            if (left < 0) {
+              // 왼쪽 끝에 도달한 경우
+              left = 0;
+              enemy.data("direction", "right"); // 이동 방향 변경
+            } else if (left <= 70) {
+              // x좌표가 70일 때
+              enemy.data("direction", "right"); // 이동 방향 변경
+            }
+          }
+          enemy.css("left", left + "px");
+          adjustEnemyPosition();
+        }
+        // 난이도 조절
+        setInterval(function () {
+          if (Math.random() < 0.005) {
+            enemyJump();
+          }
+          moveEnemy();
+        }, 50);
+
+        function adjustEnemyPosition() {
+          var enemy = $("#enemy");
+          var x = parseInt(enemy.css("left"));
+          var y = parseInt(enemy.css("top"));
+          var currentFloor = 1;
+
+          if ((x >= 130 && x <= 170) || (x >= 790 && x <= 830)) {
+            y = 556;
+            currentFloor = 1;
+          } else if (y >= 330 && y <= 444) {
+            y = 438;
+            currentFloor = 2;
+          } else if (y >= 200 && y <= 325) {
+            y = 318;
+            currentFloor = 3;
+          } else if (165 < y && y < 200) {
+            y = 198;
+            currentFloor = 4;
+          }
+          enemy.css("top", y + "px");
+          enemy.data("current-floor", currentFloor); // 현재 층수 정보 저장
+
+          return currentFloor;
+        }
+
+        function shoot() {
+          var player = $("#player");
+          var x = parseInt(player.css("left"));
+          var y = parseInt(player.css("top"));
+          var direction = player.hasClass("left") ? -1 : 1;
+          var bubble = $('<img class="bubble" src="bubble.png"/>');
+          bubble.css("position", "absolute");
+          bubble.css(
+            "left",
+            player.position().left + player.width() / 2 + "px"
+          );
+          bubble.css("top", player.position().top + "px");
+          $("#container").append(bubble);
+          var bubbleX = x + direction * 300;
+          bubble.animate({ left: bubbleX + "px" }, 500, function () {
+            $(this).animate({ top: "-100px" }, 2000, function () {
+              $(this).remove();
+            });
+          });
+        }
+
         function handleClick(event) {
           var x = event.clientX;
           var y = event.clientY;
           console.log("x: " + x + ", y: " + y);
 
           // x 좌표가 161에서 206 사이인 경우 y 좌표를 0으로 설정
-          if (x >= 161 && x <= 206) {
-            y = 0;
-          }
 
           // 캐릭터 위치 설정
           $("#player").css({ top: y + "px", left: x + "px" });
@@ -232,19 +380,6 @@
             detectCollision();
           }, 50);
         });
-        // 적 위치 이동
-        function moveEnemy() {
-          var enemy = $("#enemy");
-          var left = parseInt(enemy.css("left"));
-          left -= 10;
-          enemy.css("left", left);
-
-          // 적이 왼쪽 끝에 도달한 경우 적을 다시 오른쪽 끝으로 옮김
-          if (left < -80) {
-            enemy.css("left", "800px");
-          }
-        }
-
         // 게임 루프
         function gameLoop() {
           detectCollision();
@@ -271,9 +406,16 @@
   <body>
     <div id="container">
       <div class="sliding-background"></div>
-
       <img id="player" src="playerR.png" alt="" />
-      <img id="enemy" src="enemyL.png" alt="" />
+
+      <img id="enemy" class="enemy" src="enemyL.png" alt="" />
+      <img id="enemy2" class="enemy" src="enemyL.png" alt="" />
+      <img id="enemy3" class="enemy" src="enemyL.png" alt="" />
+      <img id="enemy4" class="enemy" src="enemyL.png" alt="" />
+      <img id="enemy5" class="enemy" src="enemyL.png" alt="" />
+      <img id="enemy6" class="enemy" src="enemyL.png" alt="" />
+      <img id="enemy7" class="enemy" src="enemyL.png" alt="" />
+      <img id="enemy8" class="enemy" src="enemyL.png" alt="" />
     </div>
     <div id="gameover">
       GameOver
