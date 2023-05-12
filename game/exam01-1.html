@@ -12,9 +12,9 @@
         $("html").keydown(function (e) {
           const moveSize = 10; // 이동할 크기
           const key = e.keyCode || e.which; // 방향키 코드
-          const $starkurvi = $("#starkurvi"); // 스타쿠르비 이미지
-          let leftPos = $starkurvi.position().left; // 현재 left 위치
-          let topPos = $starkurvi.position().top; // 현재 top 위치
+          const $player = $("#player"); // 스타쿠르비 이미지
+          let leftPos = $player.position().left; // 현재 left 위치
+          let topPos = $player.position().top; // 현재 top 위치
           if (key === 37) {
             // 왼쪽 방향키
             leftPos -= moveSize;
@@ -28,7 +28,7 @@
             // 아래쪽 방향키
             topPos += moveSize;
           }
-          $starkurvi.css({ left: leftPos, top: topPos }); // 위치 설정
+          $player.css({ left: leftPos, top: topPos }); // 위치 설정
         });
       });
     </script>
@@ -38,7 +38,7 @@
         width: 300px;
         height: 300px;
       }
-      #starkurvi {
+      #player {
         position: absolute;
         left: 100px;
         top: 100px;
@@ -53,7 +53,7 @@
   </head>
   <body>
     <div id="container">
-      <img id="starkurvi" src="starkurvi.png" alt="" />
+      <img id="player" src="player.png" alt="" />
       <img id="backgroundimage" src="backgroundimage.png" alt="" />
     </div>
   </body>

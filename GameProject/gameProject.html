@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      #container {
+        position: relative;
+        width: 1000px;
+        height: 600px;
+        border: 1px solid black;
+      }
+
+      #player {
+        position: absolute;
+        left: 70px;
+        top: 415px;
+      }
+
+      #enemy {
+        width: 60px;
+        height: 30px;
+        position: absolute;
+        left: auto;
+        top: auto;
+        right: 0px;
+        bottom: 6px;
+        border: 1px solid;
+      }
+      #gameover {
+        border: 1px solid;
+        font-size: 3px;
+        width: 270px;
+        position: absolute;
+        left: 300px;
+        top: 150px;
+        display: none;
+        color: rgb(211, 214, 14);
+        font: bold;
+      }
+      #button {
+        transform: translate(60px);
+      }
+      #score {
+        font-size: 50px;
+        position: absolute;
+        z-index: 1;
+        color: rgb(212, 19, 19);
+      }
+      .sliding-background {
+        position: absolute;
+        background: url(backgroundMap.png);
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script>
+      $(document).ready(function () {
+        var isjumping = false;
+
+        function setKeyboardEvent() {
+          // 키보드 이벤트 정의
+          $("html").keydown(function (e) {
+            switch (e.key) {
+              case " ":
+                if (!isjumping) {
+                  // 점프 연타 방지
+                  jump();
+                }
+                break;
+              case "ArrowLeft":
+                moveLeft();
+                break;
+              case "ArrowRight":
+                moveRight();
+                break;
+            }
+            console.log(e.key);
+            console.log($("#player").css("top"));
+          });
+        }
+        //캐릭터가 맵의 빈곳에 위치했을때 떨어지는 효과 만들기
+        function checkAndSetYPosition() {
+          var player = $("#player");
+          var x = parseInt(player.css("left"));
+          var y = parseInt(player.css("top"));
+
+          if (x >= 130 && x <= 170) {
+            player.animate({ top: "536px" }, "slow");
+          }
+
+          console.log("캐릭터의 x좌표: " + x + ", y좌표: " + y);
+        }
+
+        function jump() {
+          isjumping = true;
+          var player = $("#player");
+          player.animate({ top: "-=140px" }, 300, "swing", function () {
+            player.animate({ top: "+=140px" }, 300, "swing", function () {
+              isjumping = false;
+            });
+          });
+          console.log(
+            "캐릭터의 위치: (" +
+              player.css("left") +
+              ": " +
+              player.css("top") +
+              ")"
+          );
+        }
+
+        function moveLeft() {
+          var player = $("#player");
+          var leftPos = parseInt(player.css("left"));
+          if (leftPos > 70) {
+            player.css("left", leftPos - 20);
+            console.log(
+              "캐릭터의 위치: (" +
+                player.css("left") +
+                ": " +
+                player.css("top") +
+                ")"
+            );
+          }
+          checkAndSetYPosition();
+        }
+
+        function moveRight() {
+          var player = $("#player");
+          var leftPos = parseInt(player.css("left"));
+          if (leftPos < 885) {
+            player.css("left", leftPos + 20);
+            console.log(
+              "캐릭터의 위치: (" +
+                player.css("left") +
+                ": " +
+                player.css("top") +
+                ")"
+            );
+          }
+          checkAndSetYPosition();
+        }
+        function handleClick(event) {
+          var x = event.clientX;
+          var y = event.clientY;
+          console.log("x: " + x + ", y: " + y);
+
+          // x 좌표가 161에서 206 사이인 경우 y 좌표를 0으로 설정
+          if (x >= 161 && x <= 206) {
+            y = 0;
+          }
+
+          // 캐릭터 위치 설정
+          $("#player").css({ top: y + "px", left: x + "px" });
+        }
+
+        // 게임 오버 처리
+        function handleGameOver() {
+          $("#gameover").show();
+        }
+
+        // 충돌 감지
+        function detectCollision() {
+          var player = $("#player");
+          var enemy = $("#enemy");
+
+          var playerTop = player.position().top;
+          var playerLeft = player.position().left;
+          var playerRight = playerLeft + player.width();
+          var playerBottom = playerTop + player.height();
+
+          var enemyTop = enemy.position().top;
+          var enemyLeft = enemy.position().left;
+          var enemyRight = enemyLeft + enemy.width();
+
+          // 충돌 검사
+          if (
+            playerLeft <= enemyRight &&
+            playerRight >= enemyLeft &&
+            playerTop <= enemyTop &&
+            playerBottom >= enemyTop
+          ) {
+            handleGameOver();
+          }
+        }
+        setKeyboardEvent();
+
+        $("#player").on("mousedown", function (event) {
+          $(document).on("mousemove", function (event) {
+            handleClick(event);
+          });
+          $(document).on("mouseup", function () {
+            $(document).off("mousemove");
+          });
+          setInterval(function () {
+            moveLeft();
+            moveRight();
+            detectCollision();
+          }, 50);
+        });
+        // 적 위치 이동
+        function moveEnemy() {
+          var enemy = $("#enemy");
+          var left = parseInt(enemy.css("left"));
+          left -= 10;
+          enemy.css("left", left);
+
+          // 적이 왼쪽 끝에 도달한 경우 적을 다시 오른쪽 끝으로 옮김
+          if (left < -80) {
+            enemy.css("left", "800px");
+          }
+        }
+
+        // 게임 루프
+        function gameLoop() {
+          detectCollision();
+          moveEnemy();
+          setTimeout(gameLoop, 50);
+        }
+
+        // 게임 시작
+        function startGame() {
+          $("#start-button").hide();
+          $("#container").show();
+          gameLoop();
+        }
+
+        // 이벤트 핸들러 등록
+        $("#start-button").click(startGame);
+        $("#gameover button").click(function () {
+          location.reload();
+        });
+        $("#container").click(handleClick);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <div class="sliding-background"></div>
+
+      <img id="player" src="playerR.png" alt="" />
+      <img id="enemy" src="enemyL.png" alt="" />
+    </div>
+    <div id="gameover">
+      GameOver
+      <button id="button" onclick="location.reload()">확인</button>
+    </div>
+  </body>
+</html>
