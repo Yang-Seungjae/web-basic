@@ -535,14 +535,36 @@
           moveEnemy(enemy3);
         }, enemyInterval);
 
-        // 게임 시작
-        function startGame() {
-          $("#start-button").hide();
-          $("#container").show();
-          gameLoop(); // 게임 루프 시작
+        /* 
+        function createNewEnemies() {
+        // 여기에서 새로운 적을 생성하는 로직을 구현합니다.
+        // 예시로 적을 생성하는 코드를 작성하였습니다.
+        for (var i = 0; i < 3; i++) {
+          
+          var newEnemy = document.createElement("img");
+          newEnemy.setAttribute("src", "enemyR.png");
+          newEnemy.classList.add("enemy");
+          newEnemy.style.left = "50%";
+          newEnemy.style.top = "198px"
+          $("#container").append(newEnemy);
+        }
+      } */
+
+        /* function checkScore() {
+        if (score >= 300) {
+          createNewEnemies(); // 점수가 300이 되면 새로운 적을 생성합니다.
+        }
+      }
+ */
+        // 게임 루프
+        function gameLoop() {
+          gameOverCollision();
+          checkScore();
+          requestAnimationFrame(gameLoop);
         }
 
         setInterval(gameOverCollision, 50);
+        setInterval(createNewEnemies, 50);
 
         function gameOverCollision(element1, element2) {
           var player = $("#player");
@@ -602,12 +624,17 @@
             handleGameOver();
           }
         }
+        // 게임 시작
+        function startGame() {
+          $("#start-button").hide();
+          $("#container").show();
+          gameLoop();
+        }
 
         // 게임 오버 처리
 
         function handleGameOver() {
           $("#gameover").show();
-          $("#overay").show();
         }
 
         // 이벤트 핸들러 등록
@@ -617,13 +644,6 @@
         });
         $("#container").click(handleClick);
       });
-
-      // 게임 루프
-      function gameLoop() {
-        gameOverCollision();
-
-        requestAnimationFrame(gameLoop);
-      }
 
       // 게임 시작
       gameLoop();
