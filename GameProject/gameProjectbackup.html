@@ -47,69 +47,24 @@
       }
 
       #gameover {
-        font-size: 200px;
-        width: 1000px;
-        height: 600px;
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: none;
-        color: rgb(238, 238, 238);
-        font-weight: bold;
-        z-index: 9999;
-      }
-
-      #button {
+        border: 1px solid;
+        font-size: 3px;
+        width: 270px;
         position: absolute;
-        top: 65%;
-        left: 45%;
-        transform: translate(-50%, -50%);
-        width: 33.3%;
-        height: 33.3%;
-        background-color: transparent;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        color: white;
-        font-size: 80px;
-        text-align: center;
-        text-transform: uppercase;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      }
-
-      #button:hover {
-        text-decoration: underline;
-      }
-
-      #button:active {
-        transform: translate(-50%, -50%) scale(0.95);
-      }
-      #overlay {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        width: 1000px;
-        height: 600px;
-        background-color: rgba(0, 0, 0, 1);
+        left: 300px;
+        top: 150px;
         display: none;
-        z-index: 9998;
+        color: rgb(211, 214, 14);
+        font: bold;
+      }
+      #button {
+        transform: translate(60px);
       }
       #score {
         font-size: 50px;
         position: absolute;
         z-index: 1;
-        top: 15%;
-        left: 10%;
-        color: rgb(54, 19, 212);
-      }
-      #banner {
-        font-size: 50px;
-        position: absolute;
-        z-index: 1;
-        top: 5%;
-        left: 10%;
-        color: rgb(54, 19, 212);
+        color: rgb(212, 19, 19);
       }
       .sliding-background {
         position: absolute;
@@ -121,7 +76,6 @@
     <script>
       $(document).ready(function () {
         var isJumping = false;
-        let score = 0;
 
         function setKeyboardEvent() {
           // 키보드 이벤트 정의
@@ -176,7 +130,6 @@
                 } else {
                   player.css("top", y + "px");
                 }
-
        */
           return currentFloor; // 현재 층수 반환
         }
@@ -275,19 +228,8 @@
                 player.css("top") +
                 ")"
             );
-
-            // 적과의 충돌 감지
-            $(".enemy").each(function () {
-              var enemy = $(this);
-              if (
-                enemy.attr("src") === "coin.png" &&
-                checkCollision(enemy, player)
-              ) {
-                removeEnemy(enemy); // 충돌한 적 제거
-              }
-            });
           }
-
+          enemy;
           adjustPlayerPosition();
         }
 
@@ -306,19 +248,7 @@
                 player.css("top") +
                 ")"
             );
-
-            // 적과의 충돌 감지
-            $(".enemy").each(function () {
-              var enemy = $(this);
-              if (
-                enemy.attr("src") === "coin.png" &&
-                checkCollision(enemy, player)
-              ) {
-                removeEnemy(enemy); // 충돌한 적 제거
-              }
-            });
           }
-
           adjustPlayerPosition();
         }
 
@@ -419,7 +349,9 @@
             });
           }, 100);
         }
+
         function removeEnemy(enemy) {
+          // 해당 적의 interval을 해제
           if (enemy.attr("id") === "enemy") {
             clearInterval(enemy1Interval);
           } else if (enemy.attr("id") === "enemy2") {
@@ -427,69 +359,9 @@
           } else if (enemy.attr("id") === "enemy3") {
             clearInterval(enemy3Interval);
           }
-          if (isPixelCollision(enemy, $("#player"))) {
-            if (enemy.attr("src") === "coin.png") {
-              enemy.remove(); // 이미지가 "coin.png"일 때 삭제
-              var score = parseInt($("#score").text());
-              score += 100;
-              $("#score").text(score);
-            } else {
-              enemy.attr("src", "bubbled.png"); // 이미지를 bubbled.png로 변경
-
-              // 이미지를 변경
-              changeToBombImage(enemy.attr("id"));
-            }
-          }
+          enemy.attr("src", "bubbled.png"); // 이미지를 bubbled.png로 변경
         }
 
-        function changeToBombImage(enemyId) {
-          var enemy = $("#" + enemyId);
-          if (
-            enemy.attr("src") === "bubbled.png" &&
-            isPixelCollision(enemy, $("#player"))
-          ) {
-            enemy.attr("src", "bomb.png");
-            // 1초 후에 이미지를 다시 변경
-            setTimeout(function () {
-              changeToCoinImage(enemyId);
-            }, 1000);
-          }
-        }
-
-        function changeToCoinImage(enemyId) {
-          $("#" + enemyId).attr("src", "coin.png");
-        }
-
-        function isPixelCollision(obj1, obj2) {
-          var canvas = $("<canvas></canvas>")[0];
-          var ctx = canvas.getContext("2d");
-          var img1 = new Image();
-          img1.src = obj1.attr("src");
-          var img2 = new Image();
-          img2.src = obj2.attr("src");
-
-          // 캔버스에 이미지 그리기
-          ctx.drawImage(img1, 0, 0);
-          var imgData1 = ctx.getImageData(0, 0, img1.width, img1.height).data;
-
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img2, 0, 0);
-          var imgData2 = ctx.getImageData(0, 0, img2.width, img2.height).data;
-
-          // 픽셀 단위로 충돌 여부 확인
-          for (var i = 0; i < imgData1.length; i += 4) {
-            var alpha1 = imgData1[i + 3];
-            var alpha2 = imgData2[i + 3];
-
-            if (alpha1 !== 0 && alpha2 !== 0) {
-              return true; // 충돌 발생
-            }
-          }
-
-          return false; // 충돌 없음
-        }
-
-        // 좌표단위 충돌검사
         function checkCollision(obj1, obj2) {
           var obj1Pos = obj1.offset();
           var obj2Pos = obj2.offset();
@@ -511,9 +383,66 @@
           }
         }
 
+        function handleClick(event) {
+          var x = event.clientX;
+          var y = event.clientY;
+          console.log("x: " + x + ", y: " + y);
+
+          // x 좌표가 161에서 206 사이인 경우 y 좌표를 0으로 설정
+
+          // 캐릭터 위치 설정
+          $("#player").css({ top: y + "px", left: x + "px" });
+        }
+
         // 게임 오버 처리
         function handleGameOver() {
           $("#gameover").show();
+        }
+
+        // 충돌 감지
+        function detectCollision() {
+          var player = $("#player");
+          var enemy = $("#enemy");
+          var bubble = $(".bubble");
+
+          var playerTop = player.position().top;
+          var playerLeft = player.position().left;
+          var playerRight = playerLeft + player.width();
+          var playerBottom = playerTop + player.height();
+
+          var enemyTop = enemy.position().top;
+          var enemyLeft = enemy.position().left;
+          var enemyRight = enemyLeft + enemy.width();
+
+          // 충돌 검사
+          if (
+            playerLeft <= enemyRight &&
+            playerRight >= enemyLeft &&
+            playerTop <= enemyTop &&
+            playerBottom >= enemyTop
+          ) {
+            handleGameOver();
+          } // 버블과 적의 충돌 검사
+          bubble.each(function () {
+            var bubble = $(this);
+            var bubbleTop = bubble.position().top;
+            var bubbleLeft = bubble.position().left;
+            var bubbleRight = bubbleLeft + bubble.width();
+            var bubbleBottom = bubbleTop + bubble.height();
+
+            if (
+              bubbleLeft <= enemyRight &&
+              bubbleRight >= enemyLeft &&
+              bubbleTop <= enemyTop &&
+              bubbleBottom >= enemyTop
+            ) {
+              // 적 제거
+              enemy.remove();
+
+              // 버블 제거
+              bubble.remove();
+            }
+          });
         }
 
         setKeyboardEvent();
@@ -528,8 +457,16 @@
           setInterval(function () {
             moveLeft();
             moveRight();
+            detectCollision();
           }, 50);
         });
+
+        // 게임 루프
+        function gameLoop() {
+          detectCollision();
+          moveEnemy();
+          setTimeout(gameLoop, 50);
+        }
 
         // 난이도 조절
 
@@ -560,19 +497,11 @@
           moveEnemy(enemy3);
         }, 50);
 
-        // 게임 루프
-        function gameLoop() {
-          moveEnemy(); // 이동
-
-          setTimeout(gameLoop, 50);
-          requestAnimationFrame(gameLoop);
-        }
-
         // 게임 시작
         function startGame() {
           $("#start-button").hide();
           $("#container").show();
-          gameLoop(); // 게임 루프 시작
+          gameLoop();
         }
 
         // 이벤트 핸들러 등록
@@ -586,18 +515,16 @@
   </head>
   <body>
     <div id="container">
-      <div id="overlay"></div>
       <div class="sliding-background"></div>
       <img id="player" src="playerR.png" alt="" />
-      <div id="banner">score</div>
-      <div id="score">0</div>
+
       <img id="enemy" class="enemy" src="enemyL.png" alt="" />
       <img id="enemy2" class="enemy" src="enemyR.png" alt="" />
       <img id="enemy3" class="enemy" src="enemyR.png" alt="" />
     </div>
     <div id="gameover">
       GameOver
-      <button id="button" onclick="location.reload()">Restart</button>
+      <button id="button" onclick="location.reload()">확인</button>
     </div>
   </body>
 </html>
