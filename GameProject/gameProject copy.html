@@ -29,23 +29,13 @@
         top: 198px;
         left: 50%;
       }
-
-      #enemy2 {
+      .enemy {
         width: 60px;
         height: 30px;
         position: absolute;
-        top: 200px;
+        top: 198px;
         left: 50%;
       }
-
-      #enemy3 {
-        width: 60px;
-        height: 30px;
-        position: absolute;
-        top: 440px;
-        left: 50%;
-      }
-
       #gameover {
         border: 1px solid;
         font-size: 3px;
@@ -75,14 +65,15 @@
     </style>
     <script>
       $(document).ready(function () {
-        var isJumping = false;
+        var isjumping = false;
+        var enemyCount = 5; // 생성할 적의 수
 
         function setKeyboardEvent() {
           // 키보드 이벤트 정의
           $("html").keydown(function (e) {
             switch (e.key) {
               case " ":
-                if (!isJumping) {
+                if (!isjumping) {
                   // 점프 연타 방지
                   $("#player").stop();
                   jump();
@@ -135,6 +126,8 @@
           return currentFloor; // 현재 층수 반환
         }
 
+        var isJumping = false;
+
         function jump() {
           if (isJumping) {
             return;
@@ -173,29 +166,21 @@
           );
         }
 
-        // isJumping 변수를 적마다 독립적으로 관리하기 위한 객체 생성
-        var enemyStatus = {
-          enemy: { isJumping: false },
-          enemy2: { isJumping: false },
-          enemy3: { isJumping: false },
-        };
-
         function enemyJump(enemy) {
-          var status = enemyStatus[enemy.attr("id")];
-          if (status.isJumping) {
+          if (isJumping) {
             return;
           }
-          status.isJumping = true;
+          isJumping = true;
           var currentFloor = adjustEnemyPosition(enemy);
           var startY = parseInt(enemy.css("top"));
           enemy.animate({ top: "-=130px" }, "fast", function () {
             var newFloor = adjustEnemyPosition(enemy);
             if (currentFloor === 4) {
               enemy.animate({ top: "+=130px" }, "fast");
-              status.isJumping = false;
+              isJumping = false;
               return;
             } else if (newFloor !== currentFloor) {
-              status.isJumping = false;
+              isJumping = false;
               return;
             }
             var endY = parseInt(enemy.css("top"));
@@ -204,7 +189,7 @@
               300,
               "swing",
               function () {
-                status.isJumping = false;
+                isJumping = false;
                 adjustEnemyPosition(enemy);
               }
             );
@@ -254,62 +239,35 @@
         }
 
         // 적 위치 이동
-        // 각 적의 독립적인 이동 상태를 저장하는 객체 생성
-        var enemyStatus = {
-          enemy: { direction: "right", speed: 5 },
-          enemy2: { direction: "right", speed: 7 },
-          enemy3: { direction: "right", speed: 3 },
-        };
+        function moveEnemy() {
+          $(".enemy:not(.hidden)").each(function () {
+            var enemy = $(this);
+            var left = parseInt(enemy.css("left"));
+            var direction = enemy.data("direction");
+            var speed = parseFloat(enemy.data("speed"));
+            var width = $("#container").width();
 
-        function moveEnemy(enemy) {
-          var left = parseInt(enemy.css("left"));
-          var direction = enemyStatus[enemy.attr("id")].direction; // 각 적의 독립적인 이동 방향
-          var speed = enemyStatus[enemy.attr("id")].speed; // 각 적의 독립적인 이동 속도
-          var width = $("#container").width();
-
-          if (direction === "right") {
-            left += speed;
-            if (left > width - 80) {
-              left = width - 80;
-              enemyStatus[enemy.attr("id")].direction = "left"; // 이동 방향 변경
-            } else if (left >= 890) {
-              enemyStatus[enemy.attr("id")].direction = "left"; // 이동 방향 변경
+            if (direction === "right") {
+              left += speed;
+              if (left > width - 80) {
+                left = width - 80;
+                enemy.data("direction", "left");
+              } else if (left >= 890) {
+                enemy.data("direction", "left");
+              }
+            } else {
+              left -= speed;
+              if (left < 0) {
+                left = 0;
+                enemy.data("direction", "right");
+              } else if (left <= 70) {
+                enemy.data("direction", "right");
+              }
             }
-          } else {
-            left -= speed;
-            if (left < 0) {
-              left = 0;
-              enemyStatus[enemy.attr("id")].direction = "right"; // 이동 방향 변경
-            } else if (left <= 70) {
-              enemyStatus[enemy.attr("id")].direction = "right"; // 이동 방향 변경
-            }
-          }
-
-          enemy.css("left", left + "px");
-          adjustEnemyPosition(enemy);
+            enemy.css("left", left + "px");
+            adjustEnemyPosition(enemy);
+          });
         }
-
-        // 난이도 조절
-        setInterval(function () {
-          var enemy = $("#enemy");
-          var enemy2 = $("#enemy2");
-          var enemy3 = $("#enemy3");
-
-          if (Math.random() < 0.01) {
-            enemyJump(enemy);
-          }
-
-          if (Math.random() < 0.01) {
-            enemyJump(enemy2);
-          }
-
-          if (Math.random() < 0.01) {
-            enemyJump(enemy3);
-          }
-          moveEnemy(enemy);
-          moveEnemy(enemy2);
-          moveEnemy(enemy3);
-        }, 50);
 
         function adjustEnemyPosition(enemy) {
           var x = parseInt(enemy.css("left"));
@@ -372,29 +330,29 @@
           $("#gameover").show();
         }
 
-        // 충돌 감지
         function detectCollision() {
           var player = $("#player");
-          var enemy = $("#enemy");
+          $(".enemy:not(.hidden)").each(function () {
+            var enemy = $(this);
 
-          var playerTop = player.position().top;
-          var playerLeft = player.position().left;
-          var playerRight = playerLeft + player.width();
-          var playerBottom = playerTop + player.height();
+            var playerTop = player.position().top;
+            var playerLeft = player.position().left;
+            var playerRight = playerLeft + player.width();
+            var playerBottom = playerTop + player.height();
 
-          var enemyTop = enemy.position().top;
-          var enemyLeft = enemy.position().left;
-          var enemyRight = enemyLeft + enemy.width();
+            var enemyTop = enemy.position().top;
+            var enemyLeft = enemy.position().left;
+            var enemyRight = enemyLeft + enemy.width();
 
-          // 충돌 검사
-          if (
-            playerLeft <= enemyRight &&
-            playerRight >= enemyLeft &&
-            playerTop <= enemyTop &&
-            playerBottom >= enemyTop
-          ) {
-            handleGameOver();
-          }
+            if (
+              playerLeft <= enemyRight &&
+              playerRight >= enemyLeft &&
+              playerTop <= enemyTop &&
+              playerBottom >= enemyTop
+            ) {
+              handleGameOver();
+            }
+          });
         }
         setKeyboardEvent();
 
@@ -418,13 +376,25 @@
           setTimeout(gameLoop, 50);
         }
 
+        // 난이도 조절
+        setInterval(function () {
+          if (Math.random() < 1) {
+            enemyJump($("#enemy"));
+            enemyJump($("#enemy1"));
+            enemyJump($("#enemy2"));
+          }
+          moveEnemy();
+        }, 50);
         // 게임 시작
+
         function startGame() {
           $("#start-button").hide();
           $("#container").show();
+          showEnemies();
           gameLoop();
+          setInterval(showEnemies, 2000);
+          setInterval(moveEnemy, 100); // 적들의 움직임을 처리할 함수를 주기적으로 호출
         }
-
         // 이벤트 핸들러 등록
         $("#start-button").click(startGame);
         $("#gameover button").click(function () {
@@ -439,9 +409,30 @@
       <div class="sliding-background"></div>
       <img id="player" src="playerR.png" alt="" />
 
-      <img id="enemy" class="enemy" src="enemyL.png" alt="" />
-      <img id="enemy2" class="enemy" src="enemyR.png" alt="" />
-      <img id="enemy3" class="enemy" src="enemyR.png" alt="" />
+      <img
+        id="enemy"
+        class="enemy"
+        src="enemyL.png"
+        alt=""
+        data-direction="left"
+        data-speed="2"
+      />
+      <img
+        id="enemy2"
+        class="enemy"
+        src="enemyL.png"
+        alt=""
+        data-direction="right"
+        data-speed="3"
+      />
+      <img
+        id="enemy3"
+        class="enemy"
+        src="enemyL.png"
+        alt=""
+        data-direction="left"
+        data-speed="4"
+      />
     </div>
     <div id="gameover">
       GameOver
