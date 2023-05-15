@@ -256,7 +256,7 @@
         // 적 위치 이동
         // 각 적의 독립적인 이동 상태를 저장하는 객체 생성
         var enemyStatus = {
-          enemy: { direction: "right", speed: 5 },
+          enemy: { direction: "left", speed: 5 },
           enemy2: { direction: "right", speed: 7 },
           enemy3: { direction: "right", speed: 3 },
         };
@@ -348,12 +348,50 @@
           );
           bubble.css("top", player.position().top + "px");
           $("#container").append(bubble);
-          var bubbleX = x + direction * 300;
-          bubble.animate({ left: bubbleX + "px" }, 500, function () {
-            $(this).animate({ top: "-100px" }, 2000, function () {
-              $(this).remove();
+
+          var bubbleX = x + direction * 200;
+          var bubbleY = y; // 버블의 초기 y 좌표
+
+          bubble.animate(
+            { left: bubbleX + "px", top: bubbleY + "px" },
+            500,
+            function () {
+              $(this).animate({ top: "-100px" }, 2000, function () {
+                $(this).remove();
+              });
+            }
+          );
+
+          // 주기적으로 충돌 감지
+          setInterval(function () {
+            $(".enemy").each(function () {
+              var enemy = $(this);
+              if (checkCollision(bubble, enemy)) {
+                enemy.remove(); // 충돌한 적 제거
+              }
             });
-          });
+          }, 100);
+        }
+
+        function checkCollision(obj1, obj2) {
+          var obj1Pos = obj1.offset();
+          var obj2Pos = obj2.offset();
+
+          var obj1Width = obj1.width();
+          var obj1Height = obj1.height();
+          var obj2Width = obj2.width();
+          var obj2Height = obj2.height();
+
+          if (
+            obj1Pos.left < obj2Pos.left + obj2Width &&
+            obj1Pos.left + obj1Width > obj2Pos.left &&
+            obj1Pos.top < obj2Pos.top + obj2Height &&
+            obj1Pos.top + obj1Height > obj2Pos.top
+          ) {
+            return true; // 충돌 발생
+          } else {
+            return false; // 충돌 없음
+          }
         }
 
         function handleClick(event) {
@@ -376,6 +414,7 @@
         function detectCollision() {
           var player = $("#player");
           var enemy = $("#enemy");
+          var bubble = $(".bubble");
 
           var playerTop = player.position().top;
           var playerLeft = player.position().left;
@@ -394,8 +433,29 @@
             playerBottom >= enemyTop
           ) {
             handleGameOver();
-          }
+          } // 버블과 적의 충돌 검사
+          bubble.each(function () {
+            var bubble = $(this);
+            var bubbleTop = bubble.position().top;
+            var bubbleLeft = bubble.position().left;
+            var bubbleRight = bubbleLeft + bubble.width();
+            var bubbleBottom = bubbleTop + bubble.height();
+
+            if (
+              bubbleLeft <= enemyRight &&
+              bubbleRight >= enemyLeft &&
+              bubbleTop <= enemyTop &&
+              bubbleBottom >= enemyTop
+            ) {
+              // 적 제거
+              enemy.remove();
+
+              // 버블 제거
+              bubble.remove();
+            }
+          });
         }
+
         setKeyboardEvent();
 
         $("#player").on("mousedown", function (event) {
@@ -411,6 +471,7 @@
             detectCollision();
           }, 50);
         });
+
         // 게임 루프
         function gameLoop() {
           detectCollision();
