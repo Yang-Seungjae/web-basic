@@ -47,13 +47,13 @@
       }
 
       #gameover {
-        font-size: 200px;
-        width: 1000px;
-        height: 600px;
-        position: fixed;
-        top: 20px;
+        font-size: 50px;
+        width: 50%;
+        height: 50%;
+        position: absolute;
+        top: 50%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-60%, -40%);
         display: none;
         color: rgb(238, 238, 238);
         font-weight: bold;
@@ -62,39 +62,15 @@
 
       #button {
         position: absolute;
-        top: 65%;
-        left: 45%;
-        transform: translate(-50%, -50%);
-        width: 33.3%;
-        height: 33.3%;
+        transform: translate(-120%, 120%);
         background-color: transparent;
         border: none;
         outline: none;
         cursor: pointer;
         color: white;
-        font-size: 80px;
-        text-align: center;
-        text-transform: uppercase;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        font-size: 50px;
       }
 
-      #button:hover {
-        text-decoration: underline;
-      }
-
-      #button:active {
-        transform: translate(-50%, -50%) scale(0.95);
-      }
-      #overlay {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        width: 1000px;
-        height: 600px;
-        background-color: rgba(0, 0, 0, 1);
-        display: none;
-        z-index: 9998;
-      }
       #score {
         font-size: 50px;
         position: absolute;
@@ -122,6 +98,8 @@
       $(document).ready(function () {
         var isJumping = false;
         let score = 0;
+        let enemyCount = 3;
+        let enemyInterval = 50;
 
         function setKeyboardEvent() {
           // 키보드 이벤트 정의
@@ -419,6 +397,7 @@
             });
           }, 100);
         }
+
         function removeEnemy(enemy) {
           if (enemy.attr("id") === "enemy") {
             clearInterval(enemy1Interval);
@@ -430,6 +409,7 @@
           if (isPixelCollision(enemy, $("#player"))) {
             if (enemy.attr("src") === "coin.png") {
               enemy.remove(); // 이미지가 "coin.png"일 때 삭제
+
               var score = parseInt($("#score").text());
               score += 100;
               $("#score").text(score);
@@ -511,11 +491,6 @@
           }
         }
 
-        // 게임 오버 처리
-        function handleGameOver() {
-          $("#gameover").show();
-        }
-
         setKeyboardEvent();
 
         $("#player").on("mousedown", function (event) {
@@ -540,7 +515,7 @@
             enemyJump(enemy);
           }
           moveEnemy(enemy);
-        }, 50);
+        }, enemyInterval);
 
         // enemy2 인터벌
         enemy2Interval = setInterval(function () {
@@ -549,7 +524,7 @@
             enemyJump(enemy2);
           }
           moveEnemy(enemy2);
-        }, 50);
+        }, enemyInterval);
 
         // enemy3 인터벌
         enemy3Interval = setInterval(function () {
@@ -558,21 +533,81 @@
             enemyJump(enemy3);
           }
           moveEnemy(enemy3);
-        }, 50);
-
-        // 게임 루프
-        function gameLoop() {
-          moveEnemy(); // 이동
-
-          setTimeout(gameLoop, 50);
-          requestAnimationFrame(gameLoop);
-        }
+        }, enemyInterval);
 
         // 게임 시작
         function startGame() {
           $("#start-button").hide();
           $("#container").show();
           gameLoop(); // 게임 루프 시작
+        }
+
+        setInterval(gameOverCollision, 50);
+
+        function gameOverCollision(element1, element2) {
+          var player = $("#player");
+          var enemy = $("#enemy");
+          var enemy2 = $("#enemy2");
+          var enemy3 = $("#enemy3");
+          var playerTop = player.position().top;
+          var playerLeft = player.position().left;
+          var playerRight = playerLeft + player.width();
+          var playerBottom = playerTop + player.height();
+
+          var enemyTop = enemy.position().top;
+          var enemyLeft = enemy.position().left;
+          var enemyRight = enemyLeft + enemy.width();
+
+          var enemy2Top = enemy2.position().top;
+          var enemy2Left = enemy2.position().left;
+          var enemy2Right = enemy2Left + enemy2.width();
+
+          var enemy3Top = enemy3.position().top;
+          var enemy3Left = enemy3.position().left;
+          var enemy3Right = enemy3Left + enemy3.width();
+
+          if (
+            !(enemy.attr("src") === "bomb.png") &&
+            !(enemy.attr("src") === "bubbled.png") &&
+            !(enemy.attr("src") === "coin.png") &&
+            playerLeft <= enemyRight &&
+            playerRight >= enemyLeft &&
+            playerTop <= enemyTop &&
+            playerBottom >= enemyTop
+          ) {
+            handleGameOver();
+          }
+
+          if (
+            !(enemy2.attr("src") === "bomb.png") &&
+            !(enemy2.attr("src") === "bubbled.png") &&
+            !(enemy2.attr("src") === "coin.png") &&
+            playerLeft <= enemy2Right &&
+            playerRight >= enemy2Left &&
+            playerTop <= enemy2Top &&
+            playerBottom >= enemy2Top
+          ) {
+            handleGameOver();
+          }
+
+          if (
+            !(enemy3.attr("src") === "bomb.png") &&
+            !(enemy3.attr("src") === "bubbled.png") &&
+            !(enemy3.attr("src") === "coin.png") &&
+            playerLeft <= enemy3Right &&
+            playerRight >= enemy3Left &&
+            playerTop <= enemy3Top &&
+            playerBottom >= enemy3Top
+          ) {
+            handleGameOver();
+          }
+        }
+
+        // 게임 오버 처리
+
+        function handleGameOver() {
+          $("#gameover").show();
+          $("#overay").show();
         }
 
         // 이벤트 핸들러 등록
@@ -582,6 +617,16 @@
         });
         $("#container").click(handleClick);
       });
+
+      // 게임 루프
+      function gameLoop() {
+        gameOverCollision();
+
+        requestAnimationFrame(gameLoop);
+      }
+
+      // 게임 시작
+      gameLoop();
     </script>
   </head>
   <body>
