@@ -8,12 +8,29 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
+      @font-face {
+        font-family: "CustomFont";
+        src: url(Pixel\ Emulator.otf);
+      }
       #container {
         position: relative;
         width: 1000px;
         height: 600px;
         border: 1px solid black;
         overflow: hidden; /* 이미지가 바깥으로 나가지 않도록 */
+      }
+
+      #stick {
+        width: 900px;
+        height: 340px;
+      }
+
+      #readMe {
+        position: absolute;
+        right: 5%;
+        top: 0%;
+        font-size: 25px;
+        font-family: "CustomFont";
       }
 
       #player {
@@ -47,13 +64,14 @@
       }
 
       #gameover {
+        font-family: "CustomFont";
         font-size: 50px;
         width: 50%;
         height: 50%;
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-60%, -40%);
+        transform: translate(-60%, -60%);
         display: none;
         color: rgb(238, 238, 238);
         font-weight: bold;
@@ -61,8 +79,9 @@
       }
 
       #button {
+        font-family: "CustomFont";
         position: absolute;
-        transform: translate(-120%, 120%);
+        transform: translate(-105%, 150%);
         background-color: transparent;
         border: none;
         outline: none;
@@ -72,6 +91,7 @@
       }
 
       #score {
+        font-family: "CustomFont";
         font-size: 50px;
         position: absolute;
         z-index: 1;
@@ -80,6 +100,7 @@
         color: rgb(54, 19, 212);
       }
       #banner {
+        font-family: "CustomFont";
         font-size: 50px;
         position: absolute;
         z-index: 1;
@@ -99,7 +120,6 @@
         var isJumping = false;
         let score = 0;
         let enemyCount = 3;
-        let enemyInterval = 50;
 
         function setKeyboardEvent() {
           // 키보드 이벤트 정의
@@ -399,16 +419,22 @@
         }
 
         function removeEnemy(enemy) {
-          if (enemy.attr("id") === "enemy") {
+          // 이코드를 적으면 적이 버블을 맞은 이후에 그 자리에 가만히 있게 만들수 있다. 적 생성 로직을 만들면 사용하면 좋을듯
+          /* if (enemy.attr("id") === "enemy") {
             clearInterval(enemy1Interval);
           } else if (enemy.attr("id") === "enemy2") {
             clearInterval(enemy2Interval);
           } else if (enemy.attr("id") === "enemy3") {
             clearInterval(enemy3Interval);
-          }
+          } */
           if (isPixelCollision(enemy, $("#player"))) {
             if (enemy.attr("src") === "coin.png") {
-              enemy.remove(); // 이미지가 "coin.png"일 때 삭제
+              enemy.hide(); // 이미지가 "coin.png"일 때 숨김
+
+              setTimeout(function () {
+                enemy.attr("src", "enemyR.png"); // 이미지를 enemyR.png로 변경
+                enemy.show(); // 이미지를 다시 표시
+              }, 5000);
 
               var score = parseInt($("#score").text());
               score += 100;
@@ -507,55 +533,39 @@
         });
 
         // 난이도 조절
+        var enemyInterval = 50;
 
-        // enemy1 인터벌
-        enemy1Interval = setInterval(function () {
-          var enemy = $("#enemy");
+        function decreaseEnemyInterval() {
+          enemyInterval -= 10;
+
+          // 감소된 enemyInterval을 출력하거나 필요한 로직을 실행합니다.
+          console.log("Enemy Interval:", enemyInterval);
+        }
+
+        // 10초마다 decreaseEnemyInterval 함수를 호출합니다.
+
+        function moveEnemyRecursive(enemySelector) {
+          var enemy = $(enemySelector);
           if (Math.random() < 0.01) {
             enemyJump(enemy);
           }
           moveEnemy(enemy);
-        }, enemyInterval);
+
+          // enemyInterval 간격으로 호출하여 적군 이동을 반복
+          setTimeout(function () {
+            moveEnemyRecursive(enemySelector);
+          }, enemyInterval);
+        }
+
+        // enemy1 인터벌
+        moveEnemyRecursive("#enemy");
 
         // enemy2 인터벌
-        enemy2Interval = setInterval(function () {
-          var enemy2 = $("#enemy2");
-          if (Math.random() < 0.01) {
-            enemyJump(enemy2);
-          }
-          moveEnemy(enemy2);
-        }, enemyInterval);
+        moveEnemyRecursive("#enemy2");
 
         // enemy3 인터벌
-        enemy3Interval = setInterval(function () {
-          var enemy3 = $("#enemy3");
-          if (Math.random() < 0.01) {
-            enemyJump(enemy3);
-          }
-          moveEnemy(enemy3);
-        }, enemyInterval);
+        moveEnemyRecursive("#enemy3");
 
-        /* 
-        function createNewEnemies() {
-        // 여기에서 새로운 적을 생성하는 로직을 구현합니다.
-        // 예시로 적을 생성하는 코드를 작성하였습니다.
-        for (var i = 0; i < 3; i++) {
-          
-          var newEnemy = document.createElement("img");
-          newEnemy.setAttribute("src", "enemyR.png");
-          newEnemy.classList.add("enemy");
-          newEnemy.style.left = "50%";
-          newEnemy.style.top = "198px"
-          $("#container").append(newEnemy);
-        }
-      } */
-
-        /* function checkScore() {
-        if (score >= 300) {
-          createNewEnemies(); // 점수가 300이 되면 새로운 적을 생성합니다.
-        }
-      }
- */
         // 게임 루프
         function gameLoop() {
           gameOverCollision();
@@ -564,7 +574,7 @@
         }
 
         setInterval(gameOverCollision, 50);
-        setInterval(createNewEnemies, 50);
+        setInterval(decreaseEnemyInterval, 15000);
 
         function gameOverCollision(element1, element2) {
           var player = $("#player");
@@ -663,6 +673,27 @@
     <div id="gameover">
       GameOver
       <button id="button" onclick="location.reload()">Restart</button>
+    </div>
+    <div><img id="stick" src="stick.png" /></div>
+    <div id="readMe">
+      <b>게임 설명</b><br />
+      HTML, CSS, JavaScript를 이용하여 웹 게임 만들기<br />
+      자잘한 버그 수정 중<br /><br />
+      <b>조작법</b><br /><br />
+      1. <- -> 방향키로 좌우 이동<br />
+      2. spacebar 로 점프 <br />
+      3. a 버튼으로 공격<br /><br />
+      <b>게임규칙</b><br /><br />
+      1. 적과 닿으면 게임오버<br />
+      2. 적을 죽이고 나온 동전을 먹으면 100점<br />
+      3. 15초마다 적의 이동속도, 점프빈도 빨라짐<br />
+      5. 5초마다 적이 다시 나타남<br /><br />
+      <b>개발자</b><br />
+      양승재 <br />
+      <a
+        href="https://github.com/Yang-Seungjae/web-basic/tree/master/GameProject"
+        >https://github.com/Yang-Seungjae</a
+      >
     </div>
   </body>
 </html>
