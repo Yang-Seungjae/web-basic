@@ -289,28 +289,6 @@
           adjustEnemyPosition(enemy);
         }
 
-        // 난이도 조절
-        setInterval(function () {
-          var enemy = $("#enemy");
-          var enemy2 = $("#enemy2");
-          var enemy3 = $("#enemy3");
-
-          if (Math.random() < 0.01) {
-            enemyJump(enemy);
-          }
-
-          if (Math.random() < 0.01) {
-            enemyJump(enemy2);
-          }
-
-          if (Math.random() < 0.01) {
-            enemyJump(enemy3);
-          }
-          moveEnemy(enemy);
-          moveEnemy(enemy2);
-          moveEnemy(enemy3);
-        }, 50);
-
         function adjustEnemyPosition(enemy) {
           var x = parseInt(enemy.css("left"));
           var y = parseInt(enemy.css("top"));
@@ -367,10 +345,22 @@
             $(".enemy").each(function () {
               var enemy = $(this);
               if (checkCollision(bubble, enemy)) {
-                enemy.remove(); // 충돌한 적 제거
+                removeEnemy(enemy); // 충돌한 적 제거
               }
             });
           }, 100);
+        }
+
+        function removeEnemy(enemy) {
+          // 해당 적의 interval을 해제
+          if (enemy.attr("id") === "enemy") {
+            clearInterval(enemy1Interval);
+          } else if (enemy.attr("id") === "enemy2") {
+            clearInterval(enemy2Interval);
+          } else if (enemy.attr("id") === "enemy3") {
+            clearInterval(enemy3Interval);
+          }
+          enemy.attr("src", "bubbled.png"); // 이미지를 bubbled.png로 변경
         }
 
         function checkCollision(obj1, obj2) {
@@ -478,6 +468,35 @@
           moveEnemy();
           setTimeout(gameLoop, 50);
         }
+
+        // 난이도 조절
+
+        // enemy1 인터벌
+        enemy1Interval = setInterval(function () {
+          var enemy = $("#enemy");
+          if (Math.random() < 0.01) {
+            enemyJump(enemy);
+          }
+          moveEnemy(enemy);
+        }, 50);
+
+        // enemy2 인터벌
+        enemy2Interval = setInterval(function () {
+          var enemy2 = $("#enemy2");
+          if (Math.random() < 0.01) {
+            enemyJump(enemy2);
+          }
+          moveEnemy(enemy2);
+        }, 50);
+
+        // enemy3 인터벌
+        enemy3Interval = setInterval(function () {
+          var enemy3 = $("#enemy3");
+          if (Math.random() < 0.01) {
+            enemyJump(enemy3);
+          }
+          moveEnemy(enemy3);
+        }, 50);
 
         // 게임 시작
         function startGame() {
