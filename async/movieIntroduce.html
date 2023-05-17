@@ -265,6 +265,13 @@
       }
 
       function showMovieDetail(title, overview, imageElement) {
+        const maxCharacters = 100; // 최대 글자 수 설정
+        let displayedOverview = overview;
+
+        if (overview.length > maxCharacters) {
+          displayedOverview = overview.substring(0, maxCharacters) + "...";
+        }
+
         const movieDetail = document.createElement("div");
         movieDetail.classList.add("movie-detail");
 
@@ -272,7 +279,7 @@
         titleElement.textContent = title;
 
         const overviewElement = document.createElement("p");
-        overviewElement.textContent = overview;
+        overviewElement.textContent = displayedOverview;
 
         movieDetail.appendChild(titleElement);
         movieDetail.appendChild(overviewElement);
