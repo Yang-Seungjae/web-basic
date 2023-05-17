@@ -43,3 +43,10 @@ https://github.com/Yang-Seungjae
 https://yang-seungjae.github.io/web-basic/GameProject/index.html
 
 ![image](https://github.com/Yang-Seungjae/web-basic/assets/126847856/a86e082d-f43b-43f6-aef5-ba98e20e0aca)
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+안녕하세요 HTML,CSS,JavaScript를 사용해서 영화 소개 홈페이지를 만들었습니다.
+
+
