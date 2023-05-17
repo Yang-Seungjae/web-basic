@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="message">
+        <div>
+            {{ upperCaseMessage }}
+        </div>
+        <input type="button" value="뒤집기" v-on:click="reversedMessage">
+    </div>
+
+    <script>
+        const app = new Vue({ // 대문자로 v를 적어야함 클래스 명이니까 자바랑 같음
+            el: '#app',
+            data : {
+                message : ''
+            },
+            computed: { //관찰
+                upperCaseMessage: function(){
+                    return this.message.toUpperCase();
+                }
+            },
+            created: function() {
+                //생성자
+                console.log('생성자!!');
+            },
+            methods: {
+                reversedMessage: function(){
+                    this.message = this.message.split('').reverse().join('')
+                }
+            }
+        });
+    </script>
+</body>
+</html>
